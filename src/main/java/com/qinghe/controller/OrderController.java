@@ -25,6 +25,8 @@ public class OrderController {
     // 添加订单
     @PostMapping("/add")
     public String addOrder(@RequestBody Order order) {
+        // 防止前端传入 id 导致主键冲突，新增统一走数据库自增
+        order.setId(null);
         orderMapper.insert(order);
         return "SUCCESS";
     }

@@ -3,38 +3,278 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>青禾光诵阁 - 管理平台</title>
+  <title>青禾光诵阁 - 智能运营控制台</title>
   <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
   <header class="topbar">
-    <h1>青禾光诵阁后端联调平台</h1>
+    <div>
+      <h1>青禾光颂阁</h1>
+      <p class="subtitle">一个结合了无人驾驶移动舱体与共享空间预约的智能化服务平台</p>
+    </div>
     <div class="topbar-right">
-      <label>后端地址</label>
-      <input id="baseUrl" value="http://localhost:8080" />
-      <button id="saveBaseUrlBtn">保存</button>
+      <span id="sessionBadge" class="session-badge">未登录</span>
+      <button id="logoutBtn" class="btn" style="display:none;">退出登录</button>
     </div>
   </header>
+
   <main class="layout">
     <aside class="sidebar">
-      <button class="nav-btn active" data-panel="loginPanel">用户认证</button>
-      <button class="nav-btn" data-panel="devicePanel">设备管理</button>
-      <button class="nav-btn" data-panel="bookingPanel">预约与订单</button>
-      <button class="nav-btn" data-panel="dispatchPanel">舱调度/舱门</button>
-      <button class="nav-btn" data-panel="energyPanel">能耗与统计</button>
-      <button class="nav-btn" data-panel="alarmPanel">告警中心</button>
-      <button class="nav-btn" data-panel="adminPanel">管理后台</button>
+      <button class="nav-btn active" data-panel="dashboardPanel" data-role="admin">总览大屏</button>
+      <button class="nav-btn" data-panel="userPanel" data-role="admin">用户与权限</button>
+      <button class="nav-btn" data-panel="devicePanel" data-role="admin">设备管理</button>
+      <button class="nav-btn" data-panel="bookingPanel" data-role="all">预约与订单</button>
+      <button class="nav-btn" data-panel="cabinPanel" data-role="all">舱位调度</button>
+      <button class="nav-btn" data-panel="energyPanel" data-role="admin">能耗中心</button>
+      <button class="nav-btn" data-panel="alarmPanel" data-role="admin">告警中心</button>
     </aside>
+
     <section class="content">
-      <div id="loginPanel" class="panel show"><h2>用户认证和权限模块</h2><div class="card-grid"><div class="card"><h3>登录</h3><div class="form-row"><label>用户名</label><input id="loginUsername" /></div><div class="form-row"><label>密码</label><input id="loginPassword" type="password" /></div><button id="loginBtn">登录</button></div><div class="card"><h3>用户管理</h3><div class="form-row"><label>用户名</label><input id="userUsername" /></div><div class="form-row"><label>密码</label><input id="userPassword" type="password" /></div><div class="form-row"><label>角色</label><input id="userRole" placeholder="admin/user" /></div><div class="form-row"><label>姓名</label><input id="userName" /></div><div class="form-row"><label>电话</label><input id="userPhone" /></div><button id="addUserBtn">新增用户</button><button id="loadUsersBtn">刷新用户列表</button></div></div><div class="card"><h3>用户列表</h3><table id="usersTable"></table></div></div>
-      <div id="devicePanel" class="panel"><h2>设备管理</h2><div class="card-grid"><div class="card"><h3>新增设备</h3><div class="form-row"><label>名称</label><input id="deviceName" /></div><div class="form-row"><label>类型</label><input id="deviceType" /></div><div class="form-row"><label>状态</label><input id="deviceStatus" placeholder="normal/warning/error" /></div><div class="form-row"><label>位置</label><input id="deviceLocation" /></div><div class="form-row"><label>IP</label><input id="deviceIp" /></div><div class="form-row"><label>MAC</label><input id="deviceMac" /></div><button id="addDeviceBtn">新增设备</button><button id="loadDevicesBtn">刷新设备列表</button></div></div><div class="card"><h3>设备列表 / 状态</h3><table id="devicesTable"></table></div></div>
-      <div id="bookingPanel" class="panel"><h2>预约和订单模块</h2><div class="card-grid"><div class="card"><h3>查询可预约时段</h3><div class="form-row"><label>舱位ID</label><input id="slotCabinId" type="number" /></div><div class="form-row"><label>日期</label><input id="slotDate" type="date" /></div><button id="querySlotsBtn">查询时段</button><pre id="slotsResult"></pre></div><div class="card"><h3>创建预约订单</h3><div class="form-row"><label>用户ID</label><input id="bookingUserId" type="number" /></div><div class="form-row"><label>舱位ID</label><input id="bookingCabinId" type="number" /></div><div class="form-row"><label>开始时间</label><input id="bookingStart" placeholder="2026-04-21 21:00:00" /></div><div class="form-row"><label>结束时间</label><input id="bookingEnd" placeholder="2026-04-21 22:00:00" /></div><button id="createBookingBtn">创建预约</button></div><div class="card"><h3>订单查询</h3><div class="form-row"><label>用户ID</label><input id="orderUserId" type="number" /></div><button id="loadOrdersByUserBtn">查该用户订单</button><button id="loadAllOrdersBtn">查所有订单</button></div></div><div class="card"><h3>订单列表</h3><table id="ordersTable"></table></div></div>
-      <div id="dispatchPanel" class="panel"><h2>舱调度与舱门控制</h2><div class="card-grid"><div class="card"><h3>舱位状态</h3><button id="loadCabinsBtn">刷新舱位状态</button><table id="cabinsTable"></table></div><div class="card"><h3>开门权限校验 + 开门</h3><div class="form-row"><label>用户ID</label><input id="openDoorUserId" type="number" /></div><div class="form-row"><label>舱位ID</label><input id="openDoorCabinId" type="number" /></div><button id="openDoorBtn">执行开门</button></div></div></div>
-      <div id="energyPanel" class="panel"><h2>能耗统计</h2><div class="card-grid"><div class="card"><h3>总能耗统计</h3><button id="loadEnergyStatsBtn">查询统计</button><pre id="energyStatsResult"></pre></div><div class="card"><h3>按设备能耗</h3><div class="form-row"><label>设备ID</label><input id="energyDeviceId" /></div><button id="loadEnergyByDeviceBtn">查询设备能耗</button></div></div><div class="card"><h3>能耗列表</h3><table id="energyTable"></table></div></div>
-      <div id="alarmPanel" class="panel"><h2>告警中心</h2><div class="card-grid"><div class="card"><h3>新增告警</h3><div class="form-row"><label>设备ID</label><input id="alarmDeviceId" /></div><div class="form-row"><label>设备名</label><input id="alarmDeviceName" /></div><div class="form-row"><label>类型</label><input id="alarmType" /></div><div class="form-row"><label>级别</label><input id="alarmLevel" placeholder="info/warning/error" /></div><div class="form-row"><label>信息</label><input id="alarmMessage" /></div><button id="addAlarmBtn">新增告警</button></div><div class="card"><h3>处理告警</h3><div class="form-row"><label>告警ID</label><input id="processAlarmId" type="number" /></div><div class="form-row"><label>处理人</label><input id="processAlarmHandler" /></div><div class="form-row"><label>处理结果</label><input id="processAlarmResolution" /></div><button id="processAlarmBtn">处理告警</button><button id="loadPendingAlarmsBtn">查询待处理</button></div></div><div class="card"><h3>告警列表</h3><button id="loadAlarmsBtn">查询全部告警</button><table id="alarmsTable"></table></div></div>
-      <div id="adminPanel" class="panel"><h2>管理后台总览</h2><div class="card-grid"><div class="card"><h3>用户数</h3><p id="statUsers">-</p></div><div class="card"><h3>设备数</h3><p id="statDevices">-</p></div><div class="card"><h3>订单数</h3><p id="statOrders">-</p></div><div class="card"><h3>待处理告警</h3><p id="statPendingAlarms">-</p></div></div><div class="card"><button id="refreshDashboardBtn">刷新总览数据</button></div></div>
+      <div id="dashboardPanel" class="panel show" data-role="admin">
+        <div class="panel-head">
+          <h2>运营总览</h2>
+          <button id="refreshDashboardBtn" class="btn btn-primary">刷新数据</button>
+        </div>
+        <div class="metric-grid">
+          <div class="metric-card"><span>用户总数</span><strong id="statUsers">-</strong></div>
+          <div class="metric-card"><span>设备总数</span><strong id="statDevices">-</strong></div>
+          <div class="metric-card"><span>订单总数</span><strong id="statOrders">-</strong></div>
+          <div class="metric-card"><span>待处理告警</span><strong id="statPendingAlarms">-</strong></div>
+          <div class="metric-card"><span>总耗电(kWh)</span><strong id="statEnergyUse">-</strong></div>
+          <div class="metric-card"><span>总发电(kWh)</span><strong id="statEnergyGen">-</strong></div>
+        </div>
+        <div class="card">
+          <h3>快速入口</h3>
+          <div class="quick-actions">
+            <button class="btn" data-jump="userPanel">进入用户模块</button>
+            <button class="btn" data-jump="bookingPanel">创建预约订单</button>
+            <button class="btn" data-jump="alarmPanel">处理告警</button>
+            <button class="btn" data-jump="cabinPanel">开门调度</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="userPanel" class="panel" data-role="admin">
+        <h2>用户与权限</h2>
+        <div class="card-grid">
+          <div class="card">
+            <h3>新增/更新用户</h3>
+            <div class="form-row"><label>ID(更新时)</label><input id="userId" type="number" placeholder="留空表示新增" /></div>
+            <div class="form-row"><label>用户名</label><input id="userUsername" /></div>
+            <div class="form-row"><label>密码</label><input id="userPassword" type="password" /></div>
+            <div class="form-row"><label>角色</label><input id="userRole" placeholder="admin/user" /></div>
+            <div class="form-row"><label>姓名</label><input id="userName" /></div>
+            <div class="form-row"><label>电话</label><input id="userPhone" /></div>
+            <div class="btn-group">
+              <button id="addUserBtn" class="btn btn-primary">新增</button>
+              <button id="updateUserBtn" class="btn">更新</button>
+            </div>
+          </div>
+          <div class="card">
+            <h3>删除用户</h3>
+            <div class="form-row"><label>用户ID</label><input id="deleteUserId" type="number" /></div>
+            <button id="deleteUserBtn" class="btn btn-danger">删除</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="panel-head">
+            <h3>用户列表</h3>
+            <button id="loadUsersBtn" class="btn">刷新</button>
+          </div>
+          <table id="usersTable"></table>
+        </div>
+      </div>
+
+      <div id="devicePanel" class="panel" data-role="admin">
+        <h2>设备管理</h2>
+        <div class="card-grid">
+          <div class="card">
+            <h3>新增/更新设备</h3>
+            <div class="form-row"><label>ID(更新时)</label><input id="deviceId" type="number" placeholder="留空表示新增" /></div>
+            <div class="form-row"><label>名称</label><input id="deviceName" /></div>
+            <div class="form-row"><label>类型</label><input id="deviceType" /></div>
+            <div class="form-row"><label>状态</label><input id="deviceStatus" placeholder="normal/warning/error" /></div>
+            <div class="form-row"><label>位置</label><input id="deviceLocation" /></div>
+            <div class="form-row"><label>IP</label><input id="deviceIp" /></div>
+            <div class="form-row"><label>MAC</label><input id="deviceMac" /></div>
+            <div class="btn-group">
+              <button id="addDeviceBtn" class="btn btn-primary">新增</button>
+              <button id="updateDeviceBtn" class="btn">更新</button>
+            </div>
+          </div>
+          <div class="card">
+            <h3>删除设备</h3>
+            <div class="form-row"><label>设备ID</label><input id="deleteDeviceId" type="number" /></div>
+            <button id="deleteDeviceBtn" class="btn btn-danger">删除</button>
+            <h3 class="mt-16">设备状态</h3>
+            <button id="loadDeviceStatusBtn" class="btn">刷新状态视图</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="panel-head">
+            <h3>设备列表</h3>
+            <button id="loadDevicesBtn" class="btn">刷新列表</button>
+          </div>
+          <table id="devicesTable"></table>
+        </div>
+      </div>
+
+      <div id="bookingPanel" class="panel" data-role="all">
+        <h2>预约与订单</h2>
+        <div class="card-grid">
+          <div class="card">
+            <h3>第一步：查询可预约时段</h3>
+            <div class="form-row"><label>舱位ID</label><input id="slotCabinId" type="number" /></div>
+            <div class="form-row"><label>日期</label><input id="slotDate" type="date" /></div>
+            <button id="querySlotsBtn" class="btn">查询</button>
+            <div id="slotsResult" class="result-box">请先选择舱位和日期</div>
+          </div>
+          <div class="card">
+            <h3>第二步：创建预约</h3>
+            <div class="form-row"><label>用户ID</label><input id="bookingUserId" type="number" /></div>
+            <div class="form-row"><label>舱位ID</label><input id="bookingCabinId" type="number" /></div>
+            <div class="form-row"><label>开始时间</label><input id="bookingStart" placeholder="2026-05-01 09:00:00" /></div>
+            <div class="form-row"><label>结束时间</label><input id="bookingEnd" placeholder="2026-05-01 10:00:00" /></div>
+            <button id="createBookingBtn" class="btn btn-primary">创建预约</button>
+            <p id="bookingResult" class="hint">创建后可在“我的订单”查看状态</p>
+          </div>
+          <div class="card">
+            <h3>第三步：查看订单</h3>
+            <div class="form-row"><label>用户ID</label><input id="orderUserId" type="number" /></div>
+            <div class="form-row" data-role="admin"><label>订单ID</label><input id="orderDetailId" type="number" /></div>
+            <div class="btn-group">
+              <button id="loadOrdersByUserBtn" class="btn">查询我的订单</button>
+              <button id="loadAllOrdersBtn" class="btn" data-role="admin">全部订单</button>
+              <button id="loadOrderDetailBtn" class="btn" data-role="admin">订单详情</button>
+            </div>
+          </div>
+          <div class="card" data-role="admin">
+            <h3>新增/更新订单</h3>
+            <div class="form-row"><label>ID(更新时)</label><input id="orderId" type="number" placeholder="留空表示新增" /></div>
+            <div class="form-row"><label>用户ID</label><input id="orderFormUserId" type="number" /></div>
+            <div class="form-row"><label>舱位ID</label><input id="orderFormCabinId" type="number" /></div>
+            <div class="form-row"><label>开始时间</label><input id="orderStartTime" placeholder="2026-05-01 09:00:00" /></div>
+            <div class="form-row"><label>时长(分钟)</label><input id="orderDuration" type="number" /></div>
+            <div class="form-row"><label>费用</label><input id="orderFee" type="number" step="0.01" /></div>
+            <div class="form-row"><label>状态</label><input id="orderStatus" type="number" placeholder="1已预约/2进行中/3完成" /></div>
+            <div class="btn-group">
+              <button id="addOrderBtn" class="btn btn-primary">新增</button>
+              <button id="updateOrderBtn" class="btn">更新</button>
+            </div>
+            <div class="form-row mt-8"><label>删除ID</label><input id="deleteOrderId" type="number" /></div>
+            <button id="deleteOrderBtn" class="btn btn-danger">删除订单</button>
+          </div>
+        </div>
+        <div class="card">
+          <h3>订单列表</h3>
+          <table id="ordersTable"></table>
+          <div id="orderDetailResult" class="result-box" data-role="admin">管理员可查看订单详情</div>
+        </div>
+      </div>
+
+      <div id="cabinPanel" class="panel" data-role="all">
+        <h2>舱位调度与开门控制</h2>
+        <div class="card-grid">
+          <div class="card" data-role="admin">
+            <h3>舱位状态列表</h3>
+            <button id="loadCabinsBtn" class="btn">刷新舱位</button>
+            <table id="cabinsTable"></table>
+          </div>
+          <div class="card">
+            <h3 data-role="admin">更新舱位状态</h3>
+            <div class="form-row" data-role="admin"><label>舱位ID</label><input id="cabinStatusId" type="number" /></div>
+            <div class="form-row" data-role="admin"><label>状态值</label><input id="cabinStatusValue" type="number" placeholder="0结束/1预约/2使用" /></div>
+            <button id="updateCabinStatusBtn" class="btn" data-role="admin">更新状态</button>
+            <h3 class="mt-16">第四步：到点开门</h3>
+            <div class="form-row"><label>用户ID</label><input id="openDoorUserId" type="number" /></div>
+            <div class="form-row"><label>舱位ID</label><input id="openDoorCabinId" type="number" /></div>
+            <button id="openDoorBtn" class="btn btn-primary">执行开门</button>
+            <div id="openDoorResult" class="result-box">请在预约时段内操作开门</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="energyPanel" class="panel" data-role="admin">
+        <h2>能耗中心</h2>
+        <div class="card-grid">
+          <div class="card">
+            <h3>能耗统计</h3>
+            <button id="loadEnergyStatsBtn" class="btn btn-primary">查询统计</button>
+            <pre id="energyStatsResult"></pre>
+          </div>
+          <div class="card">
+            <h3>按设备查询</h3>
+            <div class="form-row"><label>设备ID</label><input id="energyDeviceId" /></div>
+            <button id="loadEnergyByDeviceBtn" class="btn">查询</button>
+          </div>
+          <div class="card">
+            <h3>新增能耗记录</h3>
+            <div class="form-row"><label>设备ID</label><input id="energyAddDeviceId" /></div>
+            <div class="form-row"><label>设备名称</label><input id="energyAddDeviceName" /></div>
+            <div class="form-row"><label>耗电</label><input id="energyAddConsumption" type="number" step="0.01" /></div>
+            <div class="form-row"><label>发电</label><input id="energyAddGeneration" type="number" step="0.01" /></div>
+            <div class="form-row"><label>时间</label><input id="energyAddTime" placeholder="2026-05-01 12:00:00" /></div>
+            <button id="addEnergyBtn" class="btn">新增记录</button>
+          </div>
+        </div>
+        <div class="card">
+          <h3>能耗数据表</h3>
+          <div class="btn-group">
+            <button id="loadEnergyListBtn" class="btn">刷新全部</button>
+          </div>
+          <table id="energyTable"></table>
+        </div>
+      </div>
+
+      <div id="alarmPanel" class="panel" data-role="admin">
+        <h2>告警中心</h2>
+        <div class="card-grid">
+          <div class="card">
+            <h3>新增告警</h3>
+            <div class="form-row"><label>设备ID</label><input id="alarmDeviceId" /></div>
+            <div class="form-row"><label>设备名</label><input id="alarmDeviceName" /></div>
+            <div class="form-row"><label>类型</label><input id="alarmType" /></div>
+            <div class="form-row"><label>级别</label><input id="alarmLevel" placeholder="info/warning/error" /></div>
+            <div class="form-row"><label>信息</label><input id="alarmMessage" /></div>
+            <button id="addAlarmBtn" class="btn btn-primary">新增告警</button>
+          </div>
+          <div class="card">
+            <h3>告警处理</h3>
+            <div class="form-row"><label>告警ID</label><input id="processAlarmId" type="number" /></div>
+            <div class="form-row"><label>处理人</label><input id="processAlarmHandler" /></div>
+            <div class="form-row"><label>处理结果</label><input id="processAlarmResolution" /></div>
+            <button id="processAlarmBtn" class="btn">处理告警</button>
+            <div class="form-row mt-8"><label>状态更新ID</label><input id="alarmStatusId" type="number" /></div>
+            <div class="form-row"><label>状态值</label><input id="alarmStatusValue" placeholder="pending/processed" /></div>
+            <button id="updateAlarmStatusBtn" class="btn">更新状态</button>
+          </div>
+          <div class="card">
+            <h3>告警查询</h3>
+            <div class="btn-group">
+              <button id="loadPendingAlarmsBtn" class="btn">待处理</button>
+              <button id="loadAlarmsBtn" class="btn">全部告警</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>告警列表</h3>
+          <table id="alarmsTable"></table>
+        </div>
+      </div>
     </section>
   </main>
+
+  <div id="loginOverlay" class="login-overlay">
+    <div class="login-card">
+      <h2>登录系统</h2>
+      <p class="hint">请先登录，再根据角色进入对应界面</p>
+      <div class="form-row"><label>用户名</label><input id="loginUsername" /></div>
+      <div class="form-row"><label>密码</label><input id="loginPassword" type="password" /></div>
+      <button id="loginBtn" class="btn btn-primary">登录</button>
+      <p class="hint" id="loginResult">未登录</p>
+    </div>
+  </div>
+
   <div id="toast" class="toast"></div>
   <script src="/app.js"></script>
 </body>

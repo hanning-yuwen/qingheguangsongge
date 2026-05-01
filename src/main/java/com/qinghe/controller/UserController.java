@@ -40,6 +40,8 @@ public class UserController {
     // 添加用户
     @PostMapping("/add")
     public String addUser(@RequestBody User user) {
+        // 防止前端传入 id 导致主键冲突，新增统一走数据库自增
+        user.setId(null);
         userMapper.insert(user);
         return "SUCCESS";
     }
